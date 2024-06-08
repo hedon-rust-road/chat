@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email varchar(64) NOT NULL,
     -- hashed argon2 password, length 97
     password_hash varchar(97) NOT NULL,
-    create_at timestamptz DEFAULT CURRENT_TIMESTAMP
+    created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create index for users for email
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS chats (
     type chat_type NOT NULL,
     -- user id list
     members bigint[] NOT NULL,
-    create_at timestamptz DEFAULT CURRENT_TIMESTAMP
+    created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create message table
@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS messages (
   sender_id bigint NOT NULL REFERENCES users(id),
   content text NOT NULL,
   images text[],
-  create_at timestamptz DEFAULT CURRENT_TIMESTAMP
+  created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create index for message for chat_id and created_at order by created_at desc
-CREATE INDEX IF NOT EXISTS chat_id_created_at_index ON messages(chat_id, create_at DESC);
+CREATE INDEX IF NOT EXISTS chat_id_created_at_index ON messages(chat_id, created_at DESC);
 
 -- create index for message for sender_id
-CREATE INDEX IF NOT EXISTS send_id_index ON messages(sender_id, create_at DESC);
+CREATE INDEX IF NOT EXISTS send_id_index ON messages(sender_id, created_at DESC);

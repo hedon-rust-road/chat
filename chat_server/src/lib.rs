@@ -1,8 +1,12 @@
 mod config;
+mod error;
 mod handlers;
+mod models;
 
 pub use config::AppConfig;
+pub use error::AppError;
 use handlers::*;
+pub use models::User;
 
 use std::{ops::Deref, sync::Arc};
 
