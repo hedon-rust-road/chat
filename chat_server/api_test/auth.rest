@@ -1,0 +1,10 @@
+### index
+GET http://localhost:6688/
+
+### signin
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+### signup
+POST http://localhost:6688/api/signup
+Content-Type: application/json
