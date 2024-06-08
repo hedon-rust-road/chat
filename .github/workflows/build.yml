@@ -21,6 +21,17 @@ jobs:
       matrix:
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: chat
+        options:
+          --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,6 +52,8 @@ jobs:
         run: cargo clippy --all-targets --all-features --tests --benches -- -D warnings
       - name: Execute rust tests
         run: cargo nextest run --all-features
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/chat
       - name: Generate a changelog
         uses: orhun/git-cliff-action@v2
         id: git-cliff
