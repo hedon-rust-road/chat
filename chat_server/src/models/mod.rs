@@ -1,8 +1,9 @@
+mod user;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-
-mod user;
+pub use user::*;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize, PartialEq)]
 pub struct User {

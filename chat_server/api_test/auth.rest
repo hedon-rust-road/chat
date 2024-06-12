@@ -1,10 +1,51 @@
 ### index
 GET http://localhost:6688/
 
-### signin
+
+### signup - valid
+POST http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+    "fullname": "hedon",
+    "email": "hedon@example.com",
+    "password": "123456"
+}
+
+### signup - duplicated
+POST http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+    "fullname": "hedon",
+    "email": "hedon@example.com",
+    "password": "123456"
+}
+
+
+### signin - valid
 POST http://localhost:6688/api/signin
 Content-Type: application/json
 
-### signup
-POST http://localhost:6688/api/signup
+{
+    "email": "hedon@example.com",
+    "password": "123456"
+}
+
+### signin - password error
+POST http://localhost:6688/api/signin
 Content-Type: application/json
+
+{
+    "email": "hedon@example.com",
+    "password": "1234567"
+}
+
+### signin - email not exists
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+    "email": "hedon1@example.com",
+    "password": "123456"
+}
