@@ -4,7 +4,7 @@ use sqlx::FromRow;
 
 mod user;
 
-#[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
+#[derive(Debug, Clone, FromRow, Serialize, Deserialize, PartialEq)]
 pub struct User {
     pub id: i64,
     pub fullname: String,

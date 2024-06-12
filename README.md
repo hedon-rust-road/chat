@@ -33,3 +33,17 @@ vi migrations/{timestamp}_initial.sql
 ```bash
 sqlx migrate run
 ```
+
+## Generate public ed25519 key with OpenSSL
+
+### generate private key
+
+```bash
+openssl genpkey -algorithm ed25519 -out ./fixtures/encoding.pem
+```
+
+### generate public key
+
+```bash
+openssl pkey -in ./fixtures/encoding.pem -pubout -out ./fixtures/decoding.pem
+```

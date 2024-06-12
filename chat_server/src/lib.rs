@@ -2,6 +2,7 @@ mod config;
 mod error;
 mod handlers;
 mod models;
+mod utils;
 
 pub use config::AppConfig;
 pub use error::AppError;
