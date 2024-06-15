@@ -1,4 +1,7 @@
+mod request_id;
+
 use axum::Router;
+use request_id::MyRequestIDLayer;
 use tower_http::{
     compression::CompressionLayer,
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
@@ -18,4 +21,5 @@ pub fn set_layer(r: Router) -> Router {
             ),
     )
     .layer(CompressionLayer::new().gzip(true).br(true).deflate(true))
+    .layer(MyRequestIDLayer {}) // .layer(from_fn(set_request_id))
 }
