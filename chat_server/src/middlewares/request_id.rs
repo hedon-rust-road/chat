@@ -4,12 +4,12 @@ use std::task::{Context, Poll};
 use tower::{Layer, Service};
 use uuid::Uuid;
 
-const REQUEST_ID_HEADER: &str = "X-Request-ID";
+use super::REQUEST_ID_HEADER;
 
 #[derive(Clone)]
-pub(crate) struct MyRequestIDLayer;
+pub(crate) struct RequestIDLayer;
 
-impl<S> Layer<S> for MyRequestIDLayer {
+impl<S> Layer<S> for RequestIDLayer {
     type Service = MyMiddleware<S>;
 
     fn layer(&self, inner: S) -> Self::Service {
