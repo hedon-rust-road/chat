@@ -1,6 +1,7 @@
 mod config;
 mod error;
 mod handlers;
+mod middlewares;
 mod models;
 mod utils;
 
@@ -8,6 +9,7 @@ use anyhow::Context;
 pub use config::AppConfig;
 pub use error::AppError;
 use handlers::*;
+use middlewares::set_layer;
 pub use models::User;
 use sqlx::PgPool;
 use utils::{DecodingKey, EncodingKey};
@@ -52,7 +54,7 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
         .nest("/api", api)
         .with_state(state);
 
-    Ok(router)
+    Ok(set_layer(router))
 }
 
 impl AppState {
