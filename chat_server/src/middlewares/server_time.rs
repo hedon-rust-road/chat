@@ -3,8 +3,8 @@ use futures_util::Future;
 use std::{
     pin::Pin,
     task::{Context, Poll},
-    time::Instant,
 };
+use tokio::time::Instant;
 use tower::{Layer, Service};
 use tracing::warn;
 

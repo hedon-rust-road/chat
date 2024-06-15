@@ -1,6 +1,8 @@
+mod auth;
 mod request_id;
 mod server_time;
 
+pub use auth::verify_token;
 use axum::Router;
 use request_id::RequestIDLayer;
 use server_time::ServerTimeLayer;
@@ -26,6 +28,6 @@ pub fn set_layer(r: Router) -> Router {
             ),
     )
     .layer(CompressionLayer::new().gzip(true).br(true).deflate(true))
-    .layer(RequestIDLayer {}) // .layer(from_fn(set_request_id))
-    .layer(ServerTimeLayer {})
+    .layer(RequestIDLayer) // .layer(from_fn(set_request_id))
+    .layer(ServerTimeLayer)
 }
