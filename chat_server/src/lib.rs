@@ -89,6 +89,7 @@ impl Deref for AppState {
 mod test_util {
     use std::path::Path;
 
+    use sqlx::Executor;
     use sqlx_db_tester::TestPg;
 
     use super::*;
@@ -119,6 +120,17 @@ mod test_util {
         };
         let tdb = TestPg::new(url, Path::new("../migrations"));
         let pool = tdb.get_pool().await;
+
+        // run prepraed sql to insert test data.
+        let sql = include_str!("../fixtures/test.sql").split(';');
+        let mut ts = pool.begin().await.expect("begin transaction failed");
+        for s in sql {
+            if s.trim().is_empty() {
+                continue;
+            }
+            ts.execute(s).await.expect("execute sql failed");
+        }
+        ts.commit().await.expect("commit transaction failed");
 
         (tdb, pool)
     }

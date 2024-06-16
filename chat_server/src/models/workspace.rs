@@ -105,9 +105,8 @@ mod tests {
     #[tokio::test]
     async fn workspace_should_find_by_id() -> anyhow::Result<()> {
         let (_tdb, pool) = get_test_pool(None).await;
-        let _ws = Workspace::create("test", 0, &pool).await?;
-        let ws = Workspace::find_by_id(_ws.id as _, &pool).await?;
-        assert_eq!(ws.unwrap().name, "test");
+        let ws = Workspace::find_by_id(1, &pool).await?;
+        assert_eq!(ws.unwrap().name, "acme");
         Ok(())
     }
 
@@ -115,9 +114,8 @@ mod tests {
     async fn workspace_should_find_by_name() -> anyhow::Result<()> {
         let (_tdb, pool) = get_test_pool(None).await;
 
-        let _ws = Workspace::create("test", 0, &pool).await?;
-        let ws = Workspace::find_by_name("test", &pool).await?;
-        assert_eq!(ws.unwrap().name, "test");
+        let ws = Workspace::find_by_name("acme", &pool).await?;
+        assert_eq!(ws.unwrap().name, "acme");
         Ok(())
     }
 
@@ -125,23 +123,10 @@ mod tests {
     async fn workspace_should_fetch_all_chat_users() -> anyhow::Result<()> {
         let (_tdb, pool) = get_test_pool(None).await;
 
-        let ws = Workspace::create("test", 0, &pool).await?;
-
-        let input1 = CreateUser::new(&ws.name, "hedon", "hedon@example.com", "123456");
-        let user1 = User::create(&input1, &pool).await.unwrap();
-        let input2 = CreateUser::new(&ws.name, "hedon2", "hedon2@example.com", "123456");
-        let user2 = User::create(&input2, &pool).await.unwrap();
-
-        let users = Workspace::fetch_all_chat_users(ws.id as _, &pool).await?;
-
-        assert_eq!(users.len(), 2);
-        assert_eq!(users[0].id, user1.id);
-        assert_eq!(users[0].fullname, user1.fullname);
-        assert_eq!(users[0].email, user1.email);
-        assert_eq!(users[1].id, user2.id);
-        assert_eq!(users[1].fullname, user2.fullname);
-        assert_eq!(users[1].email, user2.email);
-
+        let users = Workspace::fetch_all_chat_users(1, &pool).await?;
+        assert_eq!(users.len(), 5);
+        assert_eq!(users[0].email, "hedon@acme.com");
+        assert_eq!(users[0].fullname, "Hedon");
         Ok(())
     }
 }
