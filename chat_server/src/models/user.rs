@@ -154,9 +154,7 @@ impl SigninUser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::user::verify_password;
-    use sqlx_db_tester::TestPg;
-    use std::path::Path;
+    use crate::{models::user::verify_password, test_util::get_test_pool};
 
     #[test]
     fn hash_password_and_verify_should_work() -> anyhow::Result<()> {
@@ -169,11 +167,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_and_verify_user_should_work() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
         let email = "hedon@gmail.com";
         let fullname = "Hedon";
         let password = "hedon";
@@ -198,11 +192,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_duplicated_user_should_fail() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
         let input = CreateUser::new("none", "Hedon", "hedon@gmail.com", "hedon");
 
         User::create(&input, &pool).await?;

@@ -82,21 +82,13 @@ impl Workspace {
 
 #[cfg(test)]
 mod tests {
-    use std::path::Path;
-
-    use sqlx_db_tester::TestPg;
-
-    use crate::{models::CreateUser, User};
+    use crate::{models::CreateUser, test_util::get_test_pool, User};
 
     use super::*;
 
     #[tokio::test]
     async fn workspace_should_create_and_set_owner() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
         let ws = Workspace::create("test", 0, &pool).await.unwrap();
 
         let input = CreateUser::new(&ws.name, "hedon", "hedon@example.com", "123456");
@@ -112,12 +104,7 @@ mod tests {
 
     #[tokio::test]
     async fn workspace_should_find_by_id() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
         let _ws = Workspace::create("test", 0, &pool).await?;
         let ws = Workspace::find_by_id(_ws.id as _, &pool).await?;
         assert_eq!(ws.unwrap().name, "test");
@@ -126,11 +113,7 @@ mod tests {
 
     #[tokio::test]
     async fn workspace_should_find_by_name() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
 
         let _ws = Workspace::create("test", 0, &pool).await?;
         let ws = Workspace::find_by_name("test", &pool).await?;
@@ -140,11 +123,7 @@ mod tests {
 
     #[tokio::test]
     async fn workspace_should_fetch_all_chat_users() -> anyhow::Result<()> {
-        let tdb = TestPg::new(
-            "postgres://postgres:postgres@localhost:5432".to_string(),
-            Path::new("../migrations"),
-        );
-        let pool = tdb.get_pool().await;
+        let (_tdb, pool) = get_test_pool(None).await;
 
         let ws = Workspace::create("test", 0, &pool).await?;
 
