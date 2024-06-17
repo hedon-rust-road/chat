@@ -2,10 +2,12 @@ mod chat;
 mod user;
 mod workspace;
 
+pub use chat::*;
+pub use user::*;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-pub use user::*;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize, PartialEq)]
 pub struct User {

@@ -9,6 +9,12 @@ pub struct ErrorOutput {
 
 #[derive(Debug, Error)]
 pub enum AppError {
+    #[error("create chat error: {0}")]
+    CreateChatError(String),
+
+    #[error("Not found: {0}")]
+    NotFound(String),
+
     #[error("email `{0}` already exists")]
     EmailAlreadyExists(String),
 
@@ -41,6 +47,8 @@ impl IntoResponse for AppError {
             Self::PasswordHashError(_) => StatusCode::UNPROCESSABLE_ENTITY,
             Self::AnyhowError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::HttpHeaderError(_) => StatusCode::UNPROCESSABLE_ENTITY,
+            Self::CreateChatError(_) => StatusCode::BAD_REQUEST,
+            Self::NotFound(_) => StatusCode::NOT_FOUND,
         };
 
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()
