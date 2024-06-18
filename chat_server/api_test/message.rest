@@ -1,1 +1,34 @@
-### empty file
+### signin - valid
+# @name signin
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+    "email": "hedon@example.com",
+    "password": "123456"
+}
+
+@token = {{signin.response.body.token}}
+
+### upload files
+POST http://localhost:6688/api/upload
+Content-Type: multipart/form-data; boundary=MyBoundary
+Authorization: Bearer {{token}}
+
+--MyBoundary
+Content-Disposition: form-data; filename="test.sql"
+Content-Type: application/octet-stream
+
+< /Users/hedon/rust/hedon-rust-road/chat/chat_server/fixtures/test.sql
+--MyBoundary
+Content-Disposition: form-data; filename="hello.txt"
+Content-Type: text/plain
+
+Hello, World!
+--MyBoundary--
+
+### get files
+GET http://localhost:6688/api/files
+Authorization: Bearer {{token}}
+
+### get file

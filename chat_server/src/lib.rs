@@ -12,6 +12,7 @@ use handlers::*;
 use middlewares::{set_layer, verify_token};
 pub use models::User;
 use sqlx::PgPool;
+use tokio::fs;
 use utils::{DecodingKey, EncodingKey};
 
 use std::{ops::Deref, sync::Arc};
@@ -49,6 +50,8 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
                 .post(send_message_handler),
         )
         .route("/chats/:id/messages", get(list_message_handler))
+        .route("/upload", post(upload_handler))
+        .route("/files/:ws_id/*path", get(file_handler))
         .layer(from_fn_with_state(state.clone(), verify_token))
         .route("/signin", post(signin_handler))
         .route("/signup", post(signup_handler));
@@ -63,6 +66,9 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
 
 impl AppState {
     pub async fn try_new(config: AppConfig) -> Result<Self, AppError> {
+        fs::create_dir_all(&config.server.base_dir)
+            .await
+            .context("create base_dir failed")?;
         let dk = DecodingKey::load(&config.auth.pk).context("load pk failed")?;
         let ek = EncodingKey::load(&config.auth.sk).context("load sk failed")?;
         let pool = PgPool::connect(&config.server.db_url)
