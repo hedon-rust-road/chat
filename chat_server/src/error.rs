@@ -9,8 +9,14 @@ pub struct ErrorOutput {
 
 #[derive(Debug, Error)]
 pub enum AppError {
+    #[error("create message error: {0}")]
+    CreateMessageError(String),
+
     #[error("create chat error: {0}")]
     CreateChatError(String),
+
+    #[error("{0}")]
+    ChatFileError(String),
 
     #[error("Not found: {0}")]
     NotFound(String),
@@ -51,6 +57,8 @@ impl IntoResponse for AppError {
             Self::AnyhowError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::HttpHeaderError(_) => StatusCode::UNPROCESSABLE_ENTITY,
             Self::CreateChatError(_) => StatusCode::BAD_REQUEST,
+            Self::CreateMessageError(_) => StatusCode::BAD_REQUEST,
+            Self::ChatFileError(_) => StatusCode::BAD_REQUEST,
             Self::NotFound(_) => StatusCode::NOT_FOUND,
             Self::IOError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
