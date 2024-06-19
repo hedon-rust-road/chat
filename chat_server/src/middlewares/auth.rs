@@ -47,14 +47,13 @@ mod tests {
     use http_body_util::BodyExt;
     use tower::ServiceExt;
 
-    use crate::{AppConfig, User};
+    use crate::User;
 
     use super::*;
 
     #[tokio::test]
     async fn verify_token_middleware_should_work() -> anyhow::Result<()> {
-        let config = AppConfig::load()?;
-        let (_, state) = AppState::new_for_test(config).await?;
+        let (_, state) = AppState::new_for_test().await?;
 
         let user = User::new(1, "hedon", "hedon@example.com");
         let token = state.ek.sign(user)?;
