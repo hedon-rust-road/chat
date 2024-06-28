@@ -3,6 +3,15 @@
 - chat_server
 - notify_server
 
+## Run Postgres in Docker
+```bash
+docker run -d \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_USER=postgres \
+    -p 5432:5432 \
+    --name mypostgres postgres
+```
+
 ## Install sqlx
 
 ```bash

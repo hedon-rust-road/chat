@@ -11,6 +11,17 @@ Content-Type: application/json
 @token = {{signin.response.body.token}}
 
 ### get chat list
-GET http://localhost:6688/api/chat
+GET http://localhost:6688/api/chats
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### create a chat
+POST http://localhost:6688/api/chats
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "hedon chat",
+    "members": [1,2],
+    "public": true
+}

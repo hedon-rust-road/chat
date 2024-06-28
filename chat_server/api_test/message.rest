@@ -31,4 +31,16 @@ Hello, World!
 GET http://localhost:6688/api/files
 Authorization: Bearer {{token}}
 
-### get file
+### send a message
+POST http://localhost:6688/api/chats/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "content": "Hello, World!",
+    "files": []
+}
+
+### get messages
+GET http://localhost:6688/api/chats/1/messages?last_id=5&limit=10
+Authorization: Bearer {{token}}
