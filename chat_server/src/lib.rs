@@ -9,7 +9,7 @@ use anyhow::Context;
 pub use config::AppConfig;
 pub use error::AppError;
 use handlers::*;
-use middlewares::{set_layer, verify_token};
+use middlewares::{set_layer, verify_chat, verify_token};
 pub use models::User;
 use sqlx::PgPool;
 use tokio::fs;
@@ -39,9 +39,21 @@ pub(crate) struct AppStateInner {
 pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
     let state = AppState::try_new(config).await?;
 
+    let chat = Router::new()
+        .route(
+            "/:id",
+            get(get_chat_handler)
+                .patch(update_chat_handler)
+                .delete(delete_chat_handler)
+                .post(send_message_handler),
+        )
+        .route("/:id/messages", get(list_message_handler))
+        .layer(from_fn_with_state(state.clone(), verify_chat))
+        .route("/", get(list_chat_handler).post(create_chat_handler));
+
     let api = Router::new()
         .route("/users", get(list_chat_user_handler))
-        .route("/chats", get(list_chat_handler).post(create_chat_handler))
+        .nest("/chats", chat)
         .route(
             "/chats/:id",
             get(get_chat_handler)

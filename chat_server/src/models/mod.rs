@@ -5,7 +5,7 @@ mod user;
 mod workspace;
 
 pub use chat::*;
-// pub use message::*;
+pub use message::*;
 pub use user::*;
 
 use chrono::{DateTime, Utc};
