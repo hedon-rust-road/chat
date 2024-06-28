@@ -41,9 +41,9 @@ impl FromStr for ChatFile {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // 1/a04/90d/e8a83ec42176fed247fae142cb749b9aa1.sql
         let Some(s) = s.strip_prefix("/files/") else {
-            return Err(AppError::ChatFileError(
-                "Invalid chat file path".to_string(),
-            ));
+            return Err(AppError::ChatFileError(format!(
+                "Invalid chat file path: {s}"
+            )));
         };
 
         // 1

@@ -1,4 +1,5 @@
 mod auth;
+mod chat;
 mod request_id;
 mod server_time;
 
