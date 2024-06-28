@@ -54,14 +54,6 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
     let api = Router::new()
         .route("/users", get(list_chat_user_handler))
         .nest("/chats", chat)
-        .route(
-            "/chats/:id",
-            get(get_chat_handler)
-                .patch(update_chat_handler)
-                .delete(delete_chat_handler)
-                .post(send_message_handler),
-        )
-        .route("/chats/:id/messages", get(list_message_handler))
         .route("/upload", post(upload_handler))
         .route("/files/:ws_id/*path", get(file_handler))
         .layer(from_fn_with_state(state.clone(), verify_token))
