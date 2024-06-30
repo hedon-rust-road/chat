@@ -18,14 +18,27 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
     <h1>Server Sent Events</h1>
-
     <script lang="javascript">
         var source = new EventSource("/events");
         source.onmessage = function (event) {
             console.log("Got:", event.data);
         };
+        source.addEventListener("NewChat", function (event) {
+            console.log("NewChat:", event.data);
+        });
+
+        source.addEventListener("AddToChat", function (event) {
+            console.log("AddToChat:", event.data);
+        });
+
+        source.addEventListener("RemoveFromChat", function (event) {
+            console.log("RemoveFromChat:", event.data);
+        });
+
+        source.addEventListener("NewMessage", function (event) {
+            console.log("NewMessage:", event.data);
+        });
     </script>
 </body>
 

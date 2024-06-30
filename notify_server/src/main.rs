@@ -8,9 +8,9 @@ async fn main() -> anyhow::Result<()> {
     let layer = Layer::new().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
 
-    setup_pg_listener().await?;
+    let (app, state) = get_router();
+    setup_pg_listener(state).await?;
 
-    let app = get_router();
     let addr = "0.0.0.0:6687";
     let listener = TcpListener::bind(addr).await?;
     info!("Listening on {}", addr);

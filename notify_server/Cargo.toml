@@ -15,6 +15,9 @@ serde_yaml = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-tokio-stream = "0.1.15"
+tokio-stream = { version = "0.1.15", features = ["sync"] }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
+chat-core = { workspace = true }
+dashmap = "6.0.1"
+serde_json = { workspace = true }
