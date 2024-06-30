@@ -3,25 +3,24 @@ mod error;
 mod handlers;
 mod middlewares;
 mod models;
-mod utils;
+
+use handlers::*;
+use middlewares::verify_chat;
+
+use chat_core::{set_layer, verify_token, DecodingKey, EncodingKey, TokenVerify, User};
 
 use anyhow::Context;
-pub use config::AppConfig;
-pub use error::AppError;
-use handlers::*;
-use middlewares::{set_layer, verify_chat, verify_token};
-pub use models::User;
-use sqlx::PgPool;
-use tokio::fs;
-use utils::{DecodingKey, EncodingKey};
-
-use std::{ops::Deref, sync::Arc};
-
 use axum::{
     middleware::from_fn_with_state,
     routing::{get, post},
     Router,
 };
+use sqlx::PgPool;
+use std::{ops::Deref, sync::Arc};
+use tokio::fs;
+
+pub use config::AppConfig;
+pub use error::AppError;
 
 #[derive(Clone)]
 pub(crate) struct AppState {
@@ -56,7 +55,7 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
         .nest("/chats", chat)
         .route("/upload", post(upload_handler))
         .route("/files/:ws_id/*path", get(file_handler))
-        .layer(from_fn_with_state(state.clone(), verify_token))
+        .layer(from_fn_with_state(state.clone(), verify_token::<AppState>))
         .route("/signin", post(signin_handler))
         .route("/signup", post(signup_handler));
 
@@ -93,6 +92,13 @@ impl Deref for AppState {
     type Target = AppStateInner;
     fn deref(&self) -> &Self::Target {
         &self.inner
+    }
+}
+
+impl TokenVerify for AppState {
+    type Error = AppError;
+    fn verify(&self, token: &str) -> Result<User, Self::Error> {
+        Ok(self.dk.verify(token)?)
     }
 }
 

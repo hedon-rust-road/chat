@@ -7,7 +7,7 @@ use uuid::Uuid;
 use super::REQUEST_ID_HEADER;
 
 #[derive(Clone)]
-pub(crate) struct RequestIDLayer;
+pub struct RequestIDLayer;
 
 impl<S> Layer<S> for RequestIDLayer {
     type Service = MyMiddleware<S>;
@@ -18,7 +18,7 @@ impl<S> Layer<S> for RequestIDLayer {
 }
 
 #[derive(Clone)]
-pub(crate) struct MyMiddleware<S> {
+pub struct MyMiddleware<S> {
     inner: S,
 }
 

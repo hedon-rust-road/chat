@@ -10,15 +10,18 @@ use axum_extra::{
 };
 use tracing::warn;
 
-use crate::AppState;
+use super::TokenVerify;
 
-pub async fn verify_token(State(state): State<AppState>, req: Request, next: Next) -> Response {
+pub async fn verify_token<T>(State(state): State<T>, req: Request, next: Next) -> Response
+where
+    T: TokenVerify + Clone + Send + Sync + 'static,
+{
     let (mut parts, body) = req.into_parts();
     let req =
         match TypedHeader::<Authorization<Bearer>>::from_request_parts(&mut parts, &state).await {
             Ok(TypedHeader(Authorization(bearer))) => {
                 let token = bearer.token();
-                match state.dk.verify(token) {
+                match state.verify(token) {
                     Ok(user) => {
                         let mut req = Request::from_parts(parts, body);
                         req.extensions_mut().insert(user);
@@ -43,24 +46,41 @@ pub async fn verify_token(State(state): State<AppState>, req: Request, next: Nex
 
 #[cfg(test)]
 mod tests {
+    use std::{ops::Deref, sync::Arc};
+
     use axum::{body::Body, middleware::from_fn_with_state, routing::get, Router};
     use http_body_util::BodyExt;
     use tower::ServiceExt;
 
-    use crate::User;
+    use crate::{
+        utils::{DecodingKey, EncodingKey},
+        User,
+    };
 
     use super::*;
 
+    #[derive(Clone)]
+    struct AppState(Arc<AppStateInner>);
+
+    struct AppStateInner {
+        ek: EncodingKey,
+        dk: DecodingKey,
+    }
+
     #[tokio::test]
     async fn verify_token_middleware_should_work() -> anyhow::Result<()> {
-        let (_, state) = AppState::new_for_test().await?;
+        let encoding_pem = include_str!("../../fixtures/encoding.pem");
+        let decoding_pem = include_str!("../../fixtures/decoding.pem");
+        let ek = EncodingKey::load(encoding_pem)?;
+        let dk = DecodingKey::load(decoding_pem)?;
+        let state = AppState(Arc::new(AppStateInner { ek, dk }));
 
         let user = User::new(1, "hedon", "hedon@example.com");
         let token = state.ek.sign(user)?;
 
         let app = Router::new()
             .route("/", get(handler))
-            .layer(from_fn_with_state(state.clone(), verify_token))
+            .layer(from_fn_with_state(state.clone(), verify_token::<AppState>))
             .with_state(state);
 
         // valid token
@@ -91,5 +111,18 @@ mod tests {
 
     async fn handler(_req: Request) -> impl IntoResponse {
         (StatusCode::OK, "ok")
+    }
+
+    impl TokenVerify for AppState {
+        type Error = anyhow::Error;
+        fn verify(&self, token: &str) -> Result<User, Self::Error> {
+            self.0.dk.verify(token)
+        }
+    }
+    impl Deref for AppState {
+        type Target = AppStateInner;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
     }
 }
