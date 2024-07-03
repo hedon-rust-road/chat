@@ -38,7 +38,7 @@ Content-Type: application/json
 
 {
     "content": "Hello, World!",
-    "files": []
+    "files": ["/files/1/317/ac5/b006140d7c80917afec90d59e4fb5f2335.sql"]
 }
 
 ### get messages

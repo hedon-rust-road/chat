@@ -1,9 +1,12 @@
 [workspace]
-members = ["chat_core", "chat_server", "notify_server"]
+members = ["chat_core", "chat_server", "chat_test", "notify_server"]
 resolver = "2"
 
 
 [workspace.dependencies]
+chat-server = { path = "./chat_server" }
+chat-core = { path = "./chat_core" }
+notify-server = { path = "./notify_server" }
 anyhow = "1.0.82"
 axum = { version = "0.7.5", features = [
     "http2",
@@ -26,7 +29,6 @@ tokio = { version = "1.37.0", features = ["rt", "rt-multi-thread", "macros"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 chrono = { version = "0.4.38", features = ["serde"] }
-chat-core = { path = "./chat_core" }
 jwt-simple = "0.12.9"
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
 tower = "0.4.13"

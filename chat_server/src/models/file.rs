@@ -92,6 +92,10 @@ mod tests {
         let file = ChatFile::new(1, "test.txt", b"hello world");
         assert_eq!(file.ws_id, 1);
         assert_eq!(file.ext, "txt");
-        assert_eq!(file.hash, "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed")
+        assert_eq!(file.hash, "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed");
+        assert_eq!(
+            file.url(),
+            "/files/1/2aa/e6c/35c94fcfb415dbe95f408b9ce91ee846ed.txt"
+        );
     }
 }

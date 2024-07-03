@@ -23,21 +23,19 @@ pub use config::AppConfig;
 pub use error::AppError;
 
 #[derive(Clone)]
-pub(crate) struct AppState {
+pub struct AppState {
     inner: Arc<AppStateInner>,
 }
 
 #[allow(unused)]
-pub(crate) struct AppStateInner {
-    pub(crate) config: AppConfig,
-    pub(crate) dk: DecodingKey,
-    pub(crate) ek: EncodingKey,
-    pub(crate) pool: sqlx::PgPool,
+pub struct AppStateInner {
+    pub config: AppConfig,
+    pub dk: DecodingKey,
+    pub ek: EncodingKey,
+    pub pool: sqlx::PgPool,
 }
 
-pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
-    let state = AppState::try_new(config).await?;
-
+pub async fn get_router(state: AppState) -> Result<Router, AppError> {
     let chat = Router::new()
         .route(
             "/:id",
@@ -102,7 +100,7 @@ impl TokenVerify for AppState {
     }
 }
 
-#[cfg(test)]
+#[cfg(feature = "test-util")]
 mod test_util {
     use std::path::Path;
 
