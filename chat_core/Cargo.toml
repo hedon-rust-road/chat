@@ -21,6 +21,7 @@ tower = { workspace = true }
 tower-http = { workspace = true }
 futures-util = { workspace = true }
 uuid = { version = "1.8.0", features = ["v4", "v7"] }
+utoipa = { version = "4.2.3", features = ["axum_extras", "chrono"] }
 
 [dev-dependencies]
 http-body-util = "0.1.2"
