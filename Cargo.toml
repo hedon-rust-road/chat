@@ -35,6 +35,7 @@ tower = "0.4.13"
 tower-http = { version = "0.5.2", features = [
     "compression-full",
     "fs",
+    "cors",
     "trace",
 ] }
 futures-util = "0.3.30"
