@@ -82,7 +82,7 @@ impl ChatServer {
             .post(&format!("http://{}/api/chats", self.addr))
             .header("Authorization", format!("Bearer {}", self.token))
             .header("Content-Type", "application/json")
-            .body(r#"{"name": "test", "members": [1,2], "public": false}"#)
+            .body(r#"{"name": "test", "ws_id":1, "members": [1,2], "public": false}"#)
             .send()
             .await?;
 

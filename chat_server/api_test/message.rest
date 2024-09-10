@@ -4,7 +4,7 @@ POST http://localhost:6688/api/signin
 Content-Type: application/json
 
 {
-    "email": "hedon@example.com",
+    "email": "john@example.com",
     "password": "123456"
 }
 
@@ -42,12 +42,12 @@ Content-Type: application/json
 }
 
 ### send a message without files
-POST http://localhost:6688/api/chats/1
+POST http://localhost:6688/api/chats/4
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "content": "Hello, World!",
+    "content": "Hello, World from John!",
     "files": []
 }
 
