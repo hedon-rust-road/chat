@@ -12,13 +12,34 @@ pub struct CreateChat {
 
 #[allow(unused)]
 impl AppState {
-    pub async fn create_chat(&self, input: CreateChat, ws_id: u64) -> Result<Chat, AppError> {
+    pub async fn create_chat(
+        &self,
+        input: CreateChat,
+        user_id: u64,
+        ws_id: u64,
+    ) -> Result<Chat, AppError> {
         let len = input.members.len();
         if len < 2 {
             return Err(AppError::CreateChatError(
                 "Chat must have at least 2 members".to_string(),
             ));
         }
+
+        // if user id is not in members, reject
+        if !input.members.contains(&(user_id as i64)) {
+            return Err(AppError::CreateChatError(
+                "User must be in chat members".to_string(),
+            ));
+        }
+
+        if let Some(name) = &input.name {
+            if name.len() < 3 {
+                return Err(AppError::CreateChatError(
+                    "Chat name must be at least 3 characters".to_string(),
+                ));
+            }
+        }
+
         if len > 8 && input.name.is_none() {
             return Err(AppError::CreateChatError(
                 "Chat must have a name if it has more than 8 members".to_string(),
@@ -62,14 +83,15 @@ impl AppState {
         Ok(chat)
     }
 
-    pub async fn fetch_chats(&self, ws_id: u64) -> Result<Vec<Chat>, AppError> {
+    pub async fn fetch_chats(&self, user_id: u64, ws_id: u64) -> Result<Vec<Chat>, AppError> {
         let chats = sqlx::query_as(
             r#"
             SELECT id, ws_id, name, type, members,created_at
             FROM chats
-            WHERE ws_id = $1"#,
+            WHERE ws_id = $1 AND $2 = ANY(members)"#,
         )
         .bind(ws_id as i64)
+        .bind(user_id as i64)
         .fetch_all(&self.pool)
         .await?;
 
@@ -133,7 +155,7 @@ mod tests {
         let (_tdb, state) = AppState::new_for_test().await?;
 
         let input = CreateChat::new("", &[1, 2], false);
-        let chat = state.create_chat(input, 1).await?;
+        let chat = state.create_chat(input, 1, 1).await?;
         assert_eq!(chat.ws_id, 1);
         assert_eq!(chat.members.len(), 2);
         assert_eq!(chat.r#type, ChatType::Single);
@@ -144,8 +166,8 @@ mod tests {
     async fn create_public_name_chat_should_work() -> anyhow::Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
 
-        let input = CreateChat::new("test", &[1, 2, 3], true);
-        let chat = state.create_chat(input, 1).await?;
+        let input = CreateChat::new("general1", &[1, 2, 3], true);
+        let chat = state.create_chat(input, 1, 1).await?;
         assert_eq!(chat.ws_id, 1);
         assert_eq!(chat.members.len(), 3);
         assert_eq!(chat.r#type, ChatType::PublicChannel);
@@ -175,7 +197,10 @@ mod tests {
     async fn chat_fetch_all_should_work() -> anyhow::Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
 
-        let chats = state.fetch_chats(1).await.expect("fetch all lchats failed");
+        let chats = state
+            .fetch_chats(1, 1)
+            .await
+            .expect("fetch all lchats failed");
 
         assert_eq!(chats.len(), 4);
         Ok(())

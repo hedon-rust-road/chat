@@ -4,6 +4,7 @@
 - notify_server
 
 ## Run Postgres in Docker
+
 ```bash
 docker run -d \
     -e POSTGRES_PASSWORD=postgres \

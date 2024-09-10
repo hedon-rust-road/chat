@@ -30,6 +30,7 @@ pub(crate) trait OpenApiRouter {
         create_chat_handler,
         get_chat_handler,
         list_message_handler,
+        list_chat_user_handler,
     ),
     components(
         schemas(User, Chat, ChatType, ChatUser, Message, Workspace, SigninUser, CreateUser,
