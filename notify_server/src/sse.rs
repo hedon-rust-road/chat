@@ -25,8 +25,10 @@ pub(crate) async fn sse_handler(
     let rx = if let Some(tx) = users.get(&user_id) {
         tx.subscribe()
     } else {
+        debug!("User not found: {}", user_id);
         let (tx, rx) = broadcast::channel(CHANNEL_CAPACITY);
-        users.insert(user_id, tx);
+        state.users.insert(user_id, tx);
+        debug!("User added: {}", user_id);
         rx
     };
 
