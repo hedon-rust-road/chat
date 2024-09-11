@@ -43,11 +43,15 @@ pub struct ChatUser {
 
 #[derive(Debug, Clone, ToSchema, Serialize, Deserialize, PartialEq, PartialOrd, sqlx::Type)]
 #[sqlx(type_name = "chat_type", rename_all = "snake_case")]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub enum ChatType {
+    #[serde(alias = "single", alias = "Single")]
     Single,
+    #[serde(alias = "group", alias = "Group")]
     Group,
+    #[serde(alias = "private_channel", alias = "privateChannel")]
     PrivateChannel,
+    #[serde(alias = "public_channel", alias = "publicChannel")]
     PublicChannel,
 }
 

@@ -9,6 +9,7 @@ use crate::{models::ChatFile, AppError, AppState};
 #[derive(Debug, Clone, ToSchema, Serialize, Deserialize)]
 pub struct CreateMessage {
     pub content: String,
+    #[serde(default)]
     pub files: Vec<String>,
 }
 

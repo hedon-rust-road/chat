@@ -147,7 +147,7 @@ impl NotifyServer {
                 .unwrap();
         });
 
-        let mut es = EventSource::get(format!("http://{}/events?access_token={}", addr, token));
+        let mut es = EventSource::get(format!("http://{}/events?token={}", addr, token));
 
         tokio::spawn(async move {
             // NOTE: next() need `futures` crate
