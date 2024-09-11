@@ -18,6 +18,7 @@ use crate::{models::CreateChat, AppError, AppState};
         ("token" = [])
     )
 )]
+/// List all chats in the workspace of the user.
 pub(crate) async fn list_chat_handler(
     Extension(user): Extension<User>,
     State(state): State<AppState>,
@@ -36,6 +37,7 @@ pub(crate) async fn list_chat_handler(
         ("token" = [])
     )
 )]
+/// Create a new chat in the workspace of the user.
 pub(crate) async fn create_chat_handler(
     Extension(user): Extension<User>,
     State(state): State<AppState>,
@@ -61,6 +63,7 @@ pub(crate) async fn create_chat_handler(
         ("token" = [])
     )
 )]
+/// Get the chat info by id.
 pub(crate) async fn get_chat_handler(
     State(state): State<AppState>,
     Path(id): Path<u64>,

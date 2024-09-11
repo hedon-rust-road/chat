@@ -22,7 +22,7 @@ pub struct AuthOutput {
 )]
 /// POST /api/signup
 ///
-/// Create a new user in the chat system with email and password.
+/// Create a new user in the chat system with email, password workspace and full name.
 ///
 /// - If the email already exists, it will return 409.
 /// - Otherwise, it will return 201 with a token.
@@ -44,6 +44,7 @@ pub(crate) async fn signup_handler(
         (status = 200, description = "User signed in", body = AuthOutput),
     )
 )]
+/// Sign in a user with email and password.
 pub(crate) async fn signin_handler(
     State(state): State<AppState>,
     Json(input): Json<SigninUser>,

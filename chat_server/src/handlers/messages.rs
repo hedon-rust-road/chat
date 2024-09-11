@@ -13,6 +13,21 @@ use crate::{
     AppError, AppState,
 };
 
+#[utoipa::path(
+    post,
+    path = "/api/chats/{id}",
+    params(
+        ("id" = u64, Path, description = "Chat id")
+    ),
+    responses(
+        (status = 200, description = "List of messages", body = Message),
+        (status = 400, description = "Invalid input", body = ErrorOutput),
+    ),
+    security(
+        ("token" = [])
+    )
+)]
+/// Send a new message in the chat.
 pub(crate) async fn send_message_handler(
     Extension(user): Extension<User>,
     State(state): State<AppState>,
@@ -38,6 +53,7 @@ pub(crate) async fn send_message_handler(
         ("token" = [])
     )
 )]
+/// List all messages in the chat.
 pub(crate) async fn list_message_handler(
     State(state): State<AppState>,
     Path(id): Path<u64>,
