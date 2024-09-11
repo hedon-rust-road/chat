@@ -42,12 +42,12 @@ Content-Type: application/json
 }
 
 ### send a message without files
-POST http://localhost:6688/api/chats/4
+POST http://localhost:6688/api/chats/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "content": "Hello, World from John!",
+    "content": "Hello, World from John 2222!",
     "files": []
 }
 
